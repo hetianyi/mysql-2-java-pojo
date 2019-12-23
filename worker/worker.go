@@ -238,7 +238,7 @@ func createBean(tableInfo map[string]string, columns map[string]common.Column, o
 	classBody.WriteString("public class " + beanName + " ")
 	if config.AddSerializeAnnotation {
 		classBody.WriteString("implements Serializable {\n\n")
-		classBody.WriteString("\tprivate static final long serialVersionUID = 1L;")
+		classBody.WriteString("    private static final long serialVersionUID = 1L;")
 		imports["java.io.Serializable"] = nil
 	} else {
 		classBody.WriteString("{")
