@@ -28,7 +28,10 @@ func init() {
 	typeMapping["longtext"] = "String"
 	typeMapping["json"] = "String"
 
+	typeMapping["tinyblob"] = "byte[]"
+	typeMapping["blob"] = "byte[]"
 	typeMapping["mediumblob"] = "byte[]"
+	typeMapping["longblob"] = "byte[]"
 	typeMapping["datetime"] = "java.util.Date"
 	typeMapping["date"] = "java.util.Date"
 	typeMapping["timestamp"] = "java.sql.Timestamp"

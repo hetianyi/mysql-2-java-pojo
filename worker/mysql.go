@@ -33,7 +33,7 @@ func InitMysqlClientConnection(connectionString string) error {
 	logger.Info("connecting to mysql server...")
 	for {
 		_db, err = gorm.Open("mysql", connectionString)
-		_db.LogMode(true)
+		_db.LogMode(false)
 		_db.DB().SetMaxOpenConns(50)
 		_db.DB().SetMaxIdleConns(10)
 		if err != nil {

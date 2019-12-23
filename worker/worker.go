@@ -197,6 +197,8 @@ func createBean(tableInfo map[string]string, columns map[string]common.Column, o
 	}
 	defer out.Close()
 
+	logger.Info("export ", tableInfo["TABLE_NAME"], " -> ", beanName)
+
 	// file content ---------------------------------------------
 	packageLine := "package " + config.Package + ";\n\n"
 	imports := make(map[string]interface{})
