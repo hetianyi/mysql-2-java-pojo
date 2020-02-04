@@ -1,0 +1,18 @@
+host: 127.0.0.1
+port: 3306
+user: root
+password: 123456
+database: test
+connection-options:
+  charset: utf8
+  loc: Local
+  parseTime: "True"
+author: Jason He
+version: 1.0.0
+package: com.xxx
+add-serialize-annotation: false
+use-lombok: true
+mybatis-plus: false
+bean-suffix: DO
+tables:
+- ""
