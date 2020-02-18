@@ -107,11 +107,12 @@ func getTables(dbName string) *list.List {
 	return ls
 }
 
+// 返回
 func parseTable(dbName string, tableInfo map[string]string) (map[string]common.Column, []string) {
 	tn := tableInfo["TABLE_NAME"]
 	tt := tableInfo["TABLE_TYPE"]
 	if isBaseTable(tt) {
-		tableSchema := "select a.* from information_schema.`COLUMNS` a where a.TABLE_SCHEMA='" + dbName + "' and a.TABLE_NAME = '" + tn + "'"
+		tableSchema := "select a.* from information_schema.`COLUMNS` a where a.TABLE_SCHEMA='" + dbName + "' and a.TABLE_NAME = '" + tn + "' order by a.ORDINAL_POSITION"
 
 		var err error
 		var ret []common.ColumnTmp
