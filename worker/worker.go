@@ -202,7 +202,8 @@ func createBean(tableInfo map[string]string, columns map[string]common.Column, o
 
 	// file content ---------------------------------------------
 	packageLine := "package " + config.Package + ";\n\n"
-	imports := make(map[string]interface{})
+	imports := make(map[string]byte)
+	importKeys := list.New()
 	var fileBody bytes.Buffer
 	var classBody bytes.Buffer
 	var getset bytes.Buffer
@@ -224,23 +225,37 @@ func createBean(tableInfo map[string]string, columns map[string]common.Column, o
 
 	if config.UseLombok {
 		classBody.WriteString("@Data\n")
+		classBody.WriteString("@Builder\n")
 		classBody.WriteString("@AllArgsConstructor\n")
 		classBody.WriteString("@NoArgsConstructor\n")
-		imports["lombok.Data"] = nil
-		imports["lombok.AllArgsConstructor"] = nil
-		imports["lombok.NoArgsConstructor"] = nil
+		imports["lombok.Data"] = 1
+		imports["lombok.Builder"] = 1
+		imports["lombok.AllArgsConstructor"] = 1
+		imports["lombok.NoArgsConstructor"] = 1
+		importKeys.PushBack("lombok.Data")
+		importKeys.PushBack("lombok.Builder")
+		importKeys.PushBack("lombok.AllArgsConstructor")
+		importKeys.PushBack("lombok.NoArgsConstructor")
+	}
+
+	if config.IgnoreEmptyField {
+		classBody.WriteString("@JsonInclude(JsonInclude.Include.NON_EMPTY)\n")
+		imports["com.fasterxml.jackson.annotation.JsonInclude"] = 1
+		importKeys.PushBack("com.fasterxml.jackson.annotation.JsonInclude")
 	}
 
 	if config.UseMybatisPlus {
 		classBody.WriteString("@TableName(\"" + tableInfo["TABLE_NAME"] + "\")\n")
-		imports["com.baomidou.mybatisplus.annotation.TableName"] = nil
+		imports["com.baomidou.mybatisplus.annotation.TableName"] = 1
+		importKeys.PushBack("com.baomidou.mybatisplus.annotation.TableName")
 	}
 
 	classBody.WriteString("public class " + beanName + " ")
 	if config.AddSerializeAnnotation {
 		classBody.WriteString("implements Serializable {\n\n")
 		classBody.WriteString("    private static final long serialVersionUID = 1L;")
-		imports["java.io.Serializable"] = nil
+		imports["java.io.Serializable"] = 1
+		importKeys.PushBack("java.io.Serializable")
 	} else {
 		classBody.WriteString("{")
 	}
@@ -270,17 +285,35 @@ func createBean(tableInfo map[string]string, columns map[string]common.Column, o
 		if config.UseMybatisPlus {
 			if v.IsId {
 				classBody.WriteString("\n    @TableId(\"" + k + "\")")
-				imports["com.baomidou.mybatisplus.annotation.TableId"] = nil
+				if imports["com.baomidou.mybatisplus.annotation.TableId"] != 1 {
+					importKeys.PushBack("com.baomidou.mybatisplus.annotation.TableId")
+				}
+				imports["com.baomidou.mybatisplus.annotation.TableId"] = 1
 			} else {
 				classBody.WriteString("\n    @TableField(\"" + k + "\")")
-				imports["com.baomidou.mybatisplus.annotation.TableField"] = nil
+				if imports["com.baomidou.mybatisplus.annotation.TableField"] != 1 {
+					importKeys.PushBack("com.baomidou.mybatisplus.annotation.TableField")
+				}
+				imports["com.baomidou.mybatisplus.annotation.TableField"] = 1
 			}
+		}
+
+		if (strings.Contains(v.ColumnType, "date") || strings.Contains(v.ColumnType, "time")) &&
+			strings.TrimSpace(config.DateFormat) != "" {
+			classBody.WriteString("\n    @JsonFormat(pattern = \"" + config.DateFormat + "\")")
+			if imports["com.fasterxml.jackson.annotation.JsonFormat"] != 1 {
+				importKeys.PushBack("com.fasterxml.jackson.annotation.JsonFormat")
+			}
+			imports["com.fasterxml.jackson.annotation.JsonFormat"] = 1
 		}
 
 		classBody.WriteString("\n    private ")
 		imp, typeN := common.GetType(v.ColumnType)
 		if imp != "" {
-			imports[imp] = nil
+			if imports[imp] != 1 {
+				importKeys.PushBack(imp)
+			}
+			imports[imp] = 1
 		}
 		classBody.WriteString(typeN)
 		classBody.WriteString(" ")
@@ -317,11 +350,14 @@ func createBean(tableInfo map[string]string, columns map[string]common.Column, o
 	classBody.WriteString("\n}")
 
 	fileBody.WriteString("\n")
-	for k := range imports {
+
+	gox.WalkList(importKeys, func(item interface{}) bool {
+		k := item.(string)
 		fileBody.WriteString("import ")
 		fileBody.WriteString(k)
 		fileBody.WriteString(";\n")
-	}
+		return false
+	})
 
 	fileBody.WriteString(classBody.String())
 	out.Write(fileBody.Bytes())
@@ -333,6 +369,23 @@ func isBaseTable(tabType string) bool {
 }
 
 func CamelIt(input string, isTab bool) string {
+
+	if len(config.IgnoreTablePrefix) > 0 {
+		for _, p := range config.IgnoreTablePrefix {
+			if strings.HasPrefix(input, p) {
+				input = input[len(p):]
+			}
+		}
+	}
+
+	if len(config.IgnoreTableSuffix) > 0 {
+		for _, p := range config.IgnoreTableSuffix {
+			if strings.HasSuffix(input, p) {
+				input = input[:len(input)-len(p)]
+			}
+		}
+	}
+
 	pattern := regexp.MustCompile("(_[^_])")
 	s := pattern.ReplaceAllStringFunc(input, func(s string) string {
 		return strings.ToUpper(s[1:2]) + s[2:]
