@@ -284,11 +284,17 @@ func createBean(tableInfo map[string]string, columns map[string]common.Column, o
 
 		if config.UseMybatisPlus {
 			if v.IsId {
-				classBody.WriteString("\n    @TableId(\"" + k + "\")")
+				classBody.WriteString("\n    @TableId(value = \"" + k + "\", type = IdType." +
+					gox.TValue(v.AutoIncrement, "AUTO", "INPUT").(string) + ")")
 				if imports["com.baomidou.mybatisplus.annotation.TableId"] != 1 {
 					importKeys.PushBack("com.baomidou.mybatisplus.annotation.TableId")
 				}
 				imports["com.baomidou.mybatisplus.annotation.TableId"] = 1
+
+				if imports["com.baomidou.mybatisplus.annotation.IdType"] != 1 {
+					importKeys.PushBack("com.baomidou.mybatisplus.annotation.IdType")
+				}
+				imports["com.baomidou.mybatisplus.annotation.IdType"] = 1
 			} else {
 				classBody.WriteString("\n    @TableField(\"" + k + "\")")
 				if imports["com.baomidou.mybatisplus.annotation.TableField"] != 1 {
