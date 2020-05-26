@@ -10,6 +10,7 @@ connection-options:
 author: Jason He
 version: 1.0.0
 package: com.xxx
+vo-package: com.xxx
 add-serialize-annotation: false
 date-format: '' # 日期字段添加jackson注解，例如yyyy-MM-dd HH:mm:ss
 ignore-empty-field: false # jackson输出忽略空字段
@@ -18,5 +19,6 @@ mybatis-plus: false
 ignore-tab-prefix:
   - ""
 bean-suffix: DO
+vo-suffix: VO
 tables:
   - ""

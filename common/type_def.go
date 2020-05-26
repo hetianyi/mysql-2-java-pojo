@@ -11,12 +11,14 @@ type Config struct {
 	Author                 string            `yaml:"author"`
 	Version                string            `yaml:"version"`
 	Package                string            `yaml:"package"`
+	VoPackage              string            `yaml:"vo-package"`
 	AddSerializeAnnotation bool              `yaml:"add-serialize-annotation"`
 	DateFormat             string            `yaml:"date-format"`
 	IgnoreEmptyField       bool              `yaml:"ignore-empty-field"`
 	UseLombok              bool              `yaml:"use-lombok"`
 	UseMybatisPlus         bool              `yaml:"mybatis-plus"`
 	BeanSuffix             string            `yaml:"bean-suffix"`
+	VoSuffix               string            `yaml:"vo-suffix"`
 	Tables                 []string          `yaml:"tables"`
 	IgnoreTablePrefix      []string          `yaml:"ignore-tab-prefix"`
 	IgnoreTableSuffix      []string          `yaml:"ignore-tab-suffix"`

@@ -34,6 +34,11 @@ func Parse(arguments []string) {
 			Usage:       `工作空间(文件夹)`,
 			Destination: &configFile,
 		},
+		cli.BoolFlag{
+			Name:        "vo",
+			Usage:       `工作空间(文件夹)`,
+			Destination: &common.VoModel,
+		},
 	}
 
 	cli.AppHelpTemplate = `
