@@ -245,7 +245,7 @@ func createBean(tableInfo map[string]string, columns map[string]common.Column, o
 	}
 
 	if config.IgnoreEmptyField {
-		classBody.WriteString("@JsonInclude(JsonInclude.Include.NON_EMPTY)\n")
+		classBody.WriteString("@JsonInclude(JsonInclude.Include.NON_NULL)\n")
 		imports["com.fasterxml.jackson.annotation.JsonInclude"] = 1
 		importKeys.PushBack("com.fasterxml.jackson.annotation.JsonInclude")
 	}

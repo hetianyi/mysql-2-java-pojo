@@ -14,7 +14,7 @@ type Config struct {
 	VoPackage              string            `yaml:"vo-package"`
 	AddSerializeAnnotation bool              `yaml:"add-serialize-annotation"`
 	DateFormat             string            `yaml:"date-format"`
-	IgnoreEmptyField       bool              `yaml:"ignore-empty-field"`
+	IgnoreEmptyField       bool              `yaml:"ignore-null-field"`
 	UseLombok              bool              `yaml:"use-lombok"`
 	UseMybatisPlus         bool              `yaml:"mybatis-plus"`
 	BeanSuffix             string            `yaml:"bean-suffix"`
