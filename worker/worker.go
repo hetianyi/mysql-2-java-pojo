@@ -257,11 +257,33 @@ func createBean(tableInfo map[string]string, columns map[string]common.Column, o
 	}
 
 	classBody.WriteString("public class " + beanName + " ")
+
 	if config.AddSerializeAnnotation {
-		classBody.WriteString("implements Serializable {\n\n")
-		classBody.WriteString("    private static final long serialVersionUID = 1L;")
 		imports["java.io.Serializable"] = 1
 		importKeys.PushBack("java.io.Serializable")
+	}
+	if config.VoExtendsConvertible {
+		imports["com.github.hetianyi.common.Convertible"] = 1
+		importKeys.PushBack("com.github.hetianyi.common.Convertible")
+	}
+
+	if config.AddSerializeAnnotation || config.VoExtendsConvertible {
+		classBody.WriteString("implements ")
+
+		if config.AddSerializeAnnotation {
+			classBody.WriteString("Serializable")
+		}
+		if config.VoExtendsConvertible {
+			if config.AddSerializeAnnotation {
+				classBody.WriteString(", ")
+			}
+			classBody.WriteString("Convertible<" + beanName + ">")
+		}
+		classBody.WriteString(" {")
+
+		if config.AddSerializeAnnotation {
+			classBody.WriteString("\n\n    private static final long serialVersionUID = 1L;")
+		}
 	} else {
 		classBody.WriteString("{")
 	}

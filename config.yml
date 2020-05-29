@@ -14,6 +14,7 @@ vo-package: com.xxx
 add-serialize-annotation: false
 date-format: '' # 日期字段添加jackson注解，例如yyyy-MM-dd HH:mm:ss
 ignore-null-field: false # jackson输出忽略空字段
+vo-extends-convertible: false # VO是否继承com.github.hetianyi.common.Convertible接口
 use-lombok: true
 mybatis-plus: false
 ignore-tab-prefix:
