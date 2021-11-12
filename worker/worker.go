@@ -231,16 +231,19 @@ func createBean(tableInfo map[string]string, columns map[string]common.Column, o
 
 	if config.UseLombok {
 		classBody.WriteString("@Data\n")
+		classBody.WriteString("@Accessors(chain = true)\n")
 		classBody.WriteString("@Builder\n")
 		classBody.WriteString("@AllArgsConstructor\n")
 		classBody.WriteString("@NoArgsConstructor\n")
-		imports["lombok.Data"] = 1
 		imports["lombok.Builder"] = 1
+		imports["lombok.Data"] = 1
+		imports["lombok.experimental.Accessors"] = 1
 		imports["lombok.AllArgsConstructor"] = 1
 		imports["lombok.NoArgsConstructor"] = 1
-		importKeys.PushBack("lombok.Data")
-		importKeys.PushBack("lombok.Builder")
 		importKeys.PushBack("lombok.AllArgsConstructor")
+		importKeys.PushBack("lombok.Builder")
+		importKeys.PushBack("lombok.Data")
+		importKeys.PushBack("lombok.experimental.Accessors")
 		importKeys.PushBack("lombok.NoArgsConstructor")
 	}
 
