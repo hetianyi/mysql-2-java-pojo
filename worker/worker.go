@@ -231,7 +231,6 @@ func createBean(tableInfo map[string]string, columns map[string]common.Column, o
 
 	if config.UseLombok {
 		classBody.WriteString("@Data\n")
-		classBody.WriteString("@Accessors(chain = true)\n")
 		classBody.WriteString("@Builder\n")
 		classBody.WriteString("@AllArgsConstructor\n")
 		classBody.WriteString("@NoArgsConstructor\n")
